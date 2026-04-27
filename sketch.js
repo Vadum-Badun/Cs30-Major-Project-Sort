@@ -95,6 +95,24 @@ function setup(){
 }
 
 function draw(){
+  running();
+}
+
+// Keyboard input, listens for A (left) or D (right) key presses
+function keyPressed(){
+  if(!isDead && places[0].active){
+    // A key = left, D key = right
+    if(key === 'a' || key === 'A'){
+      places[0].move("left");
+    }
+    else if(key === 'd' || key === 'D'){
+      places[0].move("right");
+    }
+  }
+}
+
+//--------------------------------------------------------------------------MY OWN FUNCTIONS----------------------------------------------------------------------------
+function running(){
   //Prevents game from starting before we enter username
   if(!gameStart){
     return;
@@ -103,33 +121,11 @@ function draw(){
   background(220);
   if(!isDead && userList.length > 0){
 
-    //Timer Bar
-    bar.display();
-    bar.update();
-
-    //Places
-    for(let i = 0; i < places.length; i++){
-      //Draws the squares
-      places[i].display();
-
-      //Animation of falling down
-      if(!places[i].active){
-        places[i].spawn();
-      }
-      else if(places[i].guessed){
-        // Slide it sideways after a correct guess
-        places[i].transform(places[i].dir);
-      }
-    }
-
+    displayPlaces();
     //Player displaying
     player.display();
 
-    //Points
-    textSize(18);
-    fill(30);
-    textAlign(LEFT);
-    text(`Points : ${points}`, 20, 30);
+    displayUI();
 
     //Show user's best score
     if(currentUser !== null){
@@ -138,19 +134,50 @@ function draw(){
       textSize(16);
       fill(30);
       text(`Best: ${best} | Player: ${currentUser}`, width / 2 , 60);
+      gameOver();
     }
     
-
-    //Controls hint
-    textSize(14);
-    fill(80);
-    textAlign(CENTER);
-    text("A = Left   |   D = Right", width / 2, height - 15);
-
   } 
 
-  //Game over Screen
-  else if(isDead){
+}
+
+function displayPlaces(){
+  //Places
+  for(let i = 0; i < places.length; i++){
+    //Draws the squares
+    places[i].display();
+
+    //Animation of falling down
+    if(!places[i].active){
+      places[i].spawn();
+    }
+    else if(places[i].guessed){
+      // Slide it sideways after a correct guess
+      places[i].transform(places[i].dir);
+    }
+  }
+}
+
+function displayUI(){
+  //Timer Bar
+  bar.display();
+  bar.update();
+
+  //Controls hint
+  textSize(14);
+  fill(80);
+  textAlign(CENTER);
+  text("A = Left   |   D = Right", width / 2, height - 15);
+
+  //Points
+  textSize(18);
+  fill(30);
+  textAlign(LEFT);
+  text(`Points : ${points}`, 20, 30);
+}
+
+function gameOver(){
+  if(isDead){
 
     //Save best score
     if(currentUser !== null){
@@ -186,20 +213,6 @@ function draw(){
   }
 }
 
-// Keyboard input, listens for A (left) or D (right) key presses
-function keyPressed(){
-  if(!isDead && places[0].active){
-    // A key = left, D key = right
-    if(key === 'a' || key === 'A'){
-      places[0].move("left");
-    }
-    else if(key === 'd' || key === 'D'){
-      places[0].move("right");
-    }
-  }
-}
-
-//--------------------------------------------------------------------------MY OWN FUNCTIONS----------------------------------------------------------------------------
 //Restart the game
 function restart(){
   points = 0;
@@ -268,16 +281,21 @@ class Place{
 
     //Randomly select the direction for the square
     this.dir = random() < 0.5 ? "left" : "right";
+
+    //random color
+    this.r = random(255);
+    this.g = random(255);
+    this.b = random(180);
   }
 
   //Draws square and its direction
   display(){
     rectMode(CENTER);
     noStroke();
-    fill(30);
+    fill(0, 0 , 255);
     rect(this.x, this.y, this.l, this.l);
 
-    fill(204, 0, 102);
+    fill(this.r, this.g, this.b);
 
     //Places indicator on the left or right side
     if(this.dir === "left"){
