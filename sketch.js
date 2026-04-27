@@ -31,6 +31,8 @@ let myInput;
 let currentUser = null;
 let gameStart = false;
 
+
+//--------------------------------------------------------------------LOCAL STORAGE---------------------------------------------------
 let storage = {
 //Saving userList array to local storage
   saveUsers(){
@@ -44,7 +46,6 @@ let storage = {
       userList = JSON.parse(stored);
     }
   },
-
   //Return stored best score for specific username
   getBestScore(name){
     let key = `bestScore_` + name;
@@ -63,29 +64,15 @@ let storage = {
   }
 };
 
-function saveInput(){
-  let userInput = myInput.value();
+//--------------------------------------------------------------------MUSIC SECTION-----------------------------------------------------------------------------------
+let bgMusic;
 
-  
-  //We shouldn't allow empty names, exit the function:
-  if(userInput === '') {
-    return;
-  }
-    
-  currentUser = userInput;
-
-  if(!userList.includes(userInput)){
-    userList.push(userInput);
-    storage.saveUsers();
-    
-  }
-
-  myInput.remove();
-  submitButton.remove();
-  myInput.value('');
-
-  gameStart = true;
+function preload() {
+  bgMusic = loadSound('https://cdn.freecodecamp.org/curriculum/js-music-player/scratching-the-surface.mp3');
 }
+
+
+//--------------------------------------------------------------------GAME LOGIC-------------------------------------------------------------------------------------
 
 function setup(){
   createCanvas(500, 500);
@@ -95,6 +82,8 @@ function setup(){
 
 
   storage.loadUsers();
+
+  bgMusic.loop();
  
   myInput = createInput('Enter your name');
   myInput.position(width/2 -90, height/2);
@@ -210,34 +199,81 @@ function keyPressed(){
   }
 }
 
+//--------------------------------------------------------------------------MY OWN FUNCTIONS----------------------------------------------------------------------------
+//Restart the game
+function restart(){
+  points = 0;
+  places = [];
+  places.push(new Place());
+  bar.f = 0;
+  isDead = false;
 
+  //Removes the button
+  if(button){
+    button.remove();
+    button = null;
+  }
+
+  //Restarts draw loop
+  loop();
+}
+
+function saveInput(){
+  let userInput = myInput.value();
+
+  
+  //We shouldn't allow empty names, exit the function:
+  if(userInput === '') {
+    return;
+  }
+    
+  currentUser = userInput;
+
+  if(!userList.includes(userInput)){
+    userList.push(userInput);
+    storage.saveUsers();
+    
+  }
+
+  myInput.remove();
+  submitButton.remove();
+  myInput.value('');
+
+  gameStart = true;
+}
+
+//----------------------------------------------------------------------CLASSES-----------------------------------------------------------------------------------------------
 //Creates the falling square with indicator of direction. 
 //Player must match direction before time runs out
-function Place(){
-  //Side length
-  this.l = 50;
+class Place{
 
-  //Starting position x
-  this.x = width / 2;
+  constructor(){
+    //Side length
+    this.l = 50;
 
-  //Starting position y
-  this.y = this.l;
+    //Starting position x
+    this.x = width / 2;
 
-  //Speed of square falling
-  this.v = 20;
+    //Starting position y
+    this.y = this.l;
 
-  //Checking if square finished falling
-  this.active = false;
+    //Speed of square falling
+    this.v = 20;
 
-  //Checking the answer given by player
-  this.guessed = false;
+    //Checking if square finished falling
+    this.active = false;
 
-  //Randomly select the direction for the square
-  this.dir = random() < 0.5 ? "left" : "right";
+    //Checking the answer given by player
+    this.guessed = false;
+
+    //Randomly select the direction for the square
+    this.dir = random() < 0.5 ? "left" : "right";
+  }
+
 
 
   //Draws square and its direction
-  this.display = () => {
+  display(){
     rectMode(CENTER);
     noStroke();
     fill(30);
@@ -255,7 +291,7 @@ function Place(){
   };
 
   //Animates the square falling down
-  this.spawn = () => {
+  spawn(){
     if(this.y < height/2){
       this.y += this.v;
     }
@@ -265,7 +301,7 @@ function Place(){
   };
 
   //Sliding the square after correct guess
-  this.transform = (dir) => {
+  transform(dir){
     if(dir === "left"){
       if(this.x > 75){
         this.x -= this.v/2;
@@ -280,7 +316,7 @@ function Place(){
 
   //Is called only when the player presses a direction button
   //Either call the function to add points, reset timer and spawn a new Place, or game over
-  this.move = (dir) => {
+  move(dir){
     if(dir !== this.dir){
       isDead = true;
     }
@@ -294,14 +330,17 @@ function Place(){
   };
 }
 
-
+//bar
 //Creates the player. Doesn't do anything, just visual design
-function Player(){
-  this.d = 25;
-  this.x = width / 2;
-  this.y = height / 2;
+class Player{
+  constructor(){
+    this.d = 25;
+    this.x = width / 2;
+    this.y = height / 2;
+  }
 
-  this.display = () =>{
+
+  display(){
     noStroke();
     fill(51, 255, 255);
     ellipse(this.x, this.y, this.d);
@@ -310,16 +349,19 @@ function Player(){
 
 
 //A timer that fills up at the top. Once filled, game is over.
-function Bar(){
-  this.x = width/2;
-  this.y = 30;
-  this.l = 200;
+class Bar{
+  constructor(){
+    this.x = width/2;
+    this.y = 30;
+    this.l = 200;
 
-  //Current fill amount, which increses each frame
-  this.f = 0;
+    //Current fill amount, which increses each frame
+    this.f = 0;
+  }
+
 
   //Draws the bar outline and filling level
-  this.display = () => {
+  display(){
     strokeWeight(4);
     stroke(30);
     fill(220);
@@ -333,7 +375,7 @@ function Bar(){
   };
 
   //Increses the fill each frame and gives a game over
-  this.update = () => {
+  update(){
     if(this.f < this.l){
       this.f += 3.2;
     }
@@ -341,22 +383,4 @@ function Bar(){
       isDead = true;
     }
   };
-}
-
-//Restart the game
-function restart(){
-  points = 0;
-  places = [];
-  places.push(new Place());
-  bar.f = 0;
-  isDead = false;
-
-  //Removes the button
-  if(button){
-    button.remove();
-    button = null;
-  }
-
-  //Restarts draw loop
-  loop();
 }
