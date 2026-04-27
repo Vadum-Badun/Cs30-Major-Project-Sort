@@ -177,7 +177,6 @@ function gameOver(){
     if(currentUser !== null){
       storage.updateBestScore(currentUser, points);
     }
-    
     //Stops the draw loop
     noLoop();
 
@@ -189,14 +188,12 @@ function gameOver(){
     textSize(30);
     text(`Points : ${points}`, width/2, height/2);
 
-
     if(currentUser !== null){
       let best = storage.getBestScore(currentUser);
       textSize(25);
       fill(30);
       text(`Best Score: ${best}`, width / 2, height / 2 + 30);
     }
-
     // Creates only one button, so it doesn't duplicate
     if(button === null){
       button = createButton('Play Again');
@@ -247,12 +244,10 @@ function saveInput(){
 
   gameStart = true;
 }
-
 //----------------------------------------------------------------------CLASSES-----------------------------------------------------------------------------------------------
 //Creates the falling square with indicator of direction. 
 //Player must match direction before time runs out
 class Place{
-
   constructor(){
     //Side length
     this.l = 50;
@@ -280,7 +275,6 @@ class Place{
     this.g = random(255);
     this.b = random(180);
   }
-
   //Draws square and its direction
   display(){
     rectMode(CENTER);
@@ -298,7 +292,6 @@ class Place{
       rect(this.x + 20, this.y, 10, this.l);
     }
   };
-
   //Animates the square falling down
   spawn(){
     if(this.y < height/2){
@@ -308,7 +301,6 @@ class Place{
       this.active = true;
     }
   };
-
   //Sliding the square after correct guess
   transform(dir){
     if(dir === "left"){
@@ -322,7 +314,6 @@ class Place{
       }
     }
   };
-
   //Is called only when the player presses a direction button
   //Either call the function to add points, reset timer and spawn a new Place, or game over
   move(dir){
@@ -353,7 +344,6 @@ class Player{
     ellipse(this.x, this.y, this.d);
   };
 }
-
 //A timer that fills up at the top. Once filled, game is over.
 class Bar{
   constructor(){
@@ -364,7 +354,6 @@ class Bar{
     //Current fill amount, which increses each frame
     this.f = 0;
   }
-
   //Draws the bar outline and filling level
   display(){
     strokeWeight(4);
