@@ -90,8 +90,6 @@ function setup(){
   submitButton = createButton('Submit');
   submitButton.position(myInput.x + 60, height / 2 + 50);
   submitButton.mousePressed(saveInput);
-  
-
 }
 
 function draw(){
@@ -110,14 +108,12 @@ function keyPressed(){
     }
   }
 }
-
 //--------------------------------------------------------------------------MY OWN FUNCTIONS----------------------------------------------------------------------------
 function running(){
   //Prevents game from starting before we enter username
   if(!gameStart){
     return;
   }
-  
   background(220);
   if(!isDead && userList.length > 0){
 
@@ -136,9 +132,7 @@ function running(){
       text(`Best: ${best} | Player: ${currentUser}`, width / 2 , 60);
       gameOver();
     }
-    
   } 
-
 }
 
 function displayPlaces(){
@@ -245,7 +239,6 @@ function saveInput(){
   if(!userList.includes(userInput)){
     userList.push(userInput);
     storage.saveUsers();
-    
   }
 
   myInput.remove();
@@ -345,8 +338,6 @@ class Place{
     }
   };
 }
-
-//bar
 //Creates the player. Doesn't do anything, just visual design
 class Player{
   constructor(){
@@ -362,7 +353,6 @@ class Player{
     ellipse(this.x, this.y, this.d);
   };
 }
-
 
 //A timer that fills up at the top. Once filled, game is over.
 class Bar{
