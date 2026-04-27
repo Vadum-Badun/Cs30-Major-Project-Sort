@@ -66,12 +66,9 @@ let storage = {
 
 //--------------------------------------------------------------------MUSIC SECTION-----------------------------------------------------------------------------------
 let bgMusic;
-
 function preload() {
   bgMusic = loadSound('https://cdn.freecodecamp.org/curriculum/js-music-player/scratching-the-surface.mp3');
 }
-
-
 //--------------------------------------------------------------------GAME LOGIC-------------------------------------------------------------------------------------
 
 function setup(){
@@ -80,9 +77,7 @@ function setup(){
   bar = new Bar();
   places.push(new Place());
 
-
   storage.loadUsers();
-
   bgMusic.loop();
  
   myInput = createInput('Enter your name');
