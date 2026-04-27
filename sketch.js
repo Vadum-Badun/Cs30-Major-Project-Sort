@@ -270,8 +270,6 @@ class Place{
     this.dir = random() < 0.5 ? "left" : "right";
   }
 
-
-
   //Draws square and its direction
   display(){
     rectMode(CENTER);
@@ -358,7 +356,6 @@ class Bar{
     //Current fill amount, which increses each frame
     this.f = 0;
   }
-
 
   //Draws the bar outline and filling level
   display(){
