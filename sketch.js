@@ -68,6 +68,11 @@ let storage = {
 let bgMusic;
 function preload() {
   bgMusic = loadSound('https://cdn.freecodecamp.org/curriculum/js-music-player/scratching-the-surface.mp3');
+
+  partyConnect(
+    "wss://demoserver.p5party.org",
+    "hello_party"
+  );
 }
 //--------------------------------------------------------------------GAME LOGIC-------------------------------------------------------------------------------------
 
