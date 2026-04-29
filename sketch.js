@@ -13,6 +13,7 @@
 //https://thecodingtrain.com/tracks/p5-tips-and-tricks/more-p5/local-storage
 //https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt 
+//https://justinbakse.notion.site/Welcome-to-p5-party-887564cad8ec455e9bee994362322f2e 
 
 //---------------------------------END OF CREDENTIALS---------------------------------------------------------------------------
 
@@ -92,6 +93,7 @@ function setup(){
   submitButton.mousePressed(saveInput);
 }
 
+//Find the way to fix the game crush after we go in worng direction
 function draw(){
   running();
 }
