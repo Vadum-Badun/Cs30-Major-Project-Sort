@@ -95,7 +95,40 @@ function setup(){
 
 //Find the way to fix the game crush after we go in worng direction
 function draw(){
-  running();
+  if(!isDead){
+    running();
+  }
+  else if(isDead){
+
+    //Save best score
+    if(currentUser !== null){
+      storage.updateBestScore(currentUser, points);
+    }
+    //Stops the draw loop
+    noLoop();
+
+    textAlign(CENTER);
+    fill("white");
+    textSize(40);
+    text("Oops, you're dead!", width/2, height/2 - 40);
+
+    textSize(30);
+    text(`Points : ${points}`, width/2, height/2);
+
+    if(currentUser !== null){
+      let best = storage.getBestScore(currentUser);
+      textSize(25);
+      fill("white");
+      text(`Best Score: ${best}`, width / 2, height / 2 + 30);
+    }
+    // Creates only one button, so it doesn't duplicate
+    if(button === null){
+      button = createButton('Play Again');
+      button.position(width/2 - 50, height/2 + 45);
+      //Once pressed, restarts the game
+      button.mousePressed(restart);
+    }
+  }
 }
 
 // Keyboard input, listens for A (left) or D (right) key presses
@@ -132,9 +165,10 @@ function running(){
       textSize(16);
       fill(30);
       text(`Best: ${best} | Player: ${currentUser}`, width / 2 , 60);
-      gameOver();
     }
-  } 
+  }
+
+  
 }
 
 function displayPlaces(){
@@ -170,40 +204,6 @@ function displayUI(){
   fill(30);
   textAlign(LEFT);
   text(`Points : ${points}`, 20, 30);
-}
-
-function gameOver(){
-  if(isDead){
-
-    //Save best score
-    if(currentUser !== null){
-      storage.updateBestScore(currentUser, points);
-    }
-    //Stops the draw loop
-    noLoop();
-
-    textAlign(CENTER);
-    fill(30);
-    textSize(40);
-    text("Oops, you're dead!", width/2, height/2 - 40);
-
-    textSize(30);
-    text(`Points : ${points}`, width/2, height/2);
-
-    if(currentUser !== null){
-      let best = storage.getBestScore(currentUser);
-      textSize(25);
-      fill(30);
-      text(`Best Score: ${best}`, width / 2, height / 2 + 30);
-    }
-    // Creates only one button, so it doesn't duplicate
-    if(button === null){
-      button = createButton('Play Again');
-      button.position(width/2 - 50, height/2 + 45);
-      //Once pressed, restarts the game
-      button.mousePressed(restart);
-    }
-  }
 }
 
 //Restart the game
@@ -271,20 +271,15 @@ class Place{
 
     //Randomly select the direction for the square
     this.dir = random() < 0.5 ? "left" : "right";
-
-    //random color
-    this.r = random(255);
-    this.g = random(255);
-    this.b = random(180);
   }
   //Draws square and its direction
   display(){
     rectMode(CENTER);
     noStroke();
-    fill(0, 0 , 255);
+    fill("black");
     rect(this.x, this.y, this.l, this.l);
 
-    fill(this.r, this.g, this.b);
+    fill("red");
 
     //Places indicator on the left or right side
     if(this.dir === "left"){
