@@ -17,7 +17,7 @@
 
 //---------------------------------END OF CREDENTIALS---------------------------------------------------------------------------
 
-
+//Player
 let player;
 
 //Array holding Place objects (the falling squares the player must react to) 
