@@ -19,17 +19,22 @@
 
 //Player
 let player;
+let isDead = false;
 
 //Array holding Place objects (the falling squares the player must react to) 
+//UI
 let places = []; 
 let bar;
-let isDead = false;
 let points = 0;
 let submitButton;
 let button = null;
+
+//Local Storage
 let userList = [];
 let myInput;
 let currentUser = null;
+
+
 let gameStart = false;
 
 
@@ -168,9 +173,25 @@ function running(){
     }
   }
 
+  //Restart the game
+  function restart(){
+    points = 0;
+    places = [];
+    places.push(new Place());
+    bar.f = 0;
+    isDead = false;
+
+    //Removes the button
+    if(button){
+      button.remove();
+      button = null;
+    }
+    //Restarts draw loop
+    loop();
+  }
   
 }
-
+//---------------------------------------------------------------DISPLAYING-----------------------------------------------------------------------------
 function displayPlaces(){
   //Places
   for(let i = 0; i < places.length; i++){
@@ -206,24 +227,7 @@ function displayUI(){
   text(`Points : ${points}`, 20, 30);
 }
 
-//Restart the game
-function restart(){
-  points = 0;
-  places = [];
-  places.push(new Place());
-  bar.f = 0;
-  isDead = false;
-
-  //Removes the button
-  if(button){
-    button.remove();
-    button = null;
-  }
-
-  //Restarts draw loop
-  loop();
-}
-
+//----------------------------------------------------------------------------LOCAL STORAGE SAVING--------------------------------------------------------------------
 function saveInput(){
   let userInput = myInput.value();
 
@@ -326,21 +330,6 @@ class Place{
     }
   };
 }
-//Creates the player. Doesn't do anything, just visual design
-class Player{
-  constructor(){
-    this.d = 25;
-    this.x = width / 2;
-    this.y = height / 2;
-  }
-
-
-  display(){
-    noStroke();
-    fill(51, 255, 255);
-    ellipse(this.x, this.y, this.d);
-  };
-}
 //A timer that fills up at the top. Once filled, game is over.
 class Bar{
   constructor(){
@@ -373,5 +362,21 @@ class Bar{
     else {
       isDead = true;
     }
+  };
+}
+
+//Creates the player. Doesn't do anything, just visual design
+class Player{
+  constructor(){
+    this.d = 25;
+    this.x = width / 2;
+    this.y = height / 2;
+  }
+
+
+  display(){
+    noStroke();
+    fill(51, 255, 255);
+    ellipse(this.x, this.y, this.d);
   };
 }
