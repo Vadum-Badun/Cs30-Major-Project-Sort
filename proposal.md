@@ -19,12 +19,6 @@ For my project, I decided to to continue building a game from my first assignmen
 - Skins(In Progress)
 - Easter Eggs
 
-
-
-//P5JS PARTY
-<script src="https://cdn.jsdelivr.net/npm/p5@latest/lib/p5.js">
-<script src="https://cdn.jsdelivr.net/npm/p5.party@latest/dist/p5.party.js">
-
 //MUSIC
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
