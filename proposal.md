@@ -5,18 +5,18 @@ For my project, I decided to to continue building a game from my first assignmen
 ## Needs to Have
 - Dark Mode(done)
 - Choosing levels(I'll make levels 1-10)
-- Visual Design(Switch from Cubes and Circle to cats and dogs)
-- Better Game Logic(More efficient and readable code. Switching to OOP The previous makes me cry)(done)
+- Visual Design(Switch from Cubes and Circle to cats and dogs)(In progress)
+- Better Game Logic(More efficient and readable code. Switching to OOP)(done)
 - Leader Board
-- Animations(How the animals walk to the side)
+- Animations(How the animals walk to the side)(In progress)
 
 
 ## Nice to Have
 - Multiplayer(Cancelled, compromise with coop)
 - Competition mode(done)
 - Music Switching
-- Upload the Music(if possible)
-- Skins
+- Upload the Music(if possible)(50/50)
+- Skins(In Progress)
 - Easter Eggs
 
 
