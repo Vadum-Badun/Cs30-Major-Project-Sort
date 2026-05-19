@@ -12,7 +12,7 @@ For my project, I decided to to continue building a game from my first assignmen
 
 
 ## Nice to Have
-- Multiplayer
+- Multiplayer(Cancelled)
 - Music Switching
 - Upload the Music(if possible)
 - Skins
