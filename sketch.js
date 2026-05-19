@@ -646,7 +646,7 @@ class Bar {
 
   update() {
     if (this.f < this.l) {
-      this.f += 3.2;
+      this.f += 1;
     }
     else {
       isDead = true;
