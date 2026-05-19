@@ -124,7 +124,8 @@ function draw() {
   if (gameMode === "single") {
     if (!isDead) {
       running();
-    } else {
+    }
+    else {
       if (currentUser !== null) {
         storage.updateBestScore(currentUser, points);
       }
@@ -141,8 +142,12 @@ function draw() {
       return;
     }
 
-    if (currentUser !== null) storage.updateBestScore(currentUser, points);
-    if (currentUser2 !== null) storage.updateBestScore(currentUser2, points2);
+    if (currentUser !== null) {
+      storage.updateBestScore(currentUser, points);
+    }
+    if (currentUser2 !== null) {
+      storage.updateBestScore(currentUser2, points2);
+    }
     noLoop();
     drawCompetitionOver();
   }
@@ -151,19 +156,31 @@ function draw() {
 function keyPressed() {
   // ---- Single player controls ----
   if (gameMode === "single" && !isDead && places[0].active) {
-    if (key === 'a' || key === 'A') places[0].move("left");
-    else if (key === 'd' || key === 'D') places[0].move("right");
+    if (key === 'a' || key === 'A') {
+      places[0].move("left");
+    }
+    else if (key === 'd' || key === 'D') {
+      places[0].move("right");
+    }
   }
 
   // ---- Competition controls ----
   if (gameMode === "competition") {
     if (!isDead && places[0] && places[0].active) {
-      if (key === 'a' || key === 'A') places[0].move("left");
-      else if (key === 'd' || key === 'D') places[0].move("right");
+      if (key === 'a' || key === 'A') {
+        places[0].move("left");
+      }
+      else if (key === 'd' || key === 'D') {
+        places[0].move("right");
+      }
     }
     if (!isDead2 && places2[0] && places2[0].active) {
-      if (keyCode === LEFT_ARROW) places2[0].move2("left");
-      else if (keyCode === RIGHT_ARROW) places2[0].move2("right");
+      if (keyCode === LEFT_ARROW) {
+        places2[0].move2("left");
+      }
+      else if (keyCode === RIGHT_ARROW) {
+        places2[0].move2("right");
+      }
     }
   }
 }
@@ -180,7 +197,9 @@ function drawModeSelect() {
 //Saving user input
 function saveInput() {
   let userInput = myInput.value();
-  if (userInput === '') return;
+  if (userInput === '') {
+    return;
+  }
 
   currentUser = userInput;
 
@@ -232,7 +251,9 @@ function showPlayer2Input() {
 //Start game as competition
 function startCompetition() {
   let name2 = myInput2.value().trim();
-  if (name2 === '') return;
+  if (name2 === '') {
+    return;
+  }
 
   currentUser2 = name2;
 
@@ -255,7 +276,9 @@ function startCompetition() {
 
 //Starts our gameplay
 function running() {
-  if (!gameStart) return;
+  if (!gameStart) {
+    return;
+  }
 
   background(darkMode ? 30 : 220);
 
@@ -308,7 +331,8 @@ function displayPlaces() {
     places[i].display();
     if (!places[i].active) {
       places[i].spawn();
-    } else if (places[i].guessed) {
+    }
+    else if (places[i].guessed) {
       places[i].transform(places[i].dir);
     }
   }
@@ -319,7 +343,8 @@ function displayPlaces2() {
     places2[i].display();
     if (!places2[i].active) {
       places2[i].spawn();
-    } else if (places2[i].guessed) {
+    }
+    else if (places2[i].guessed) {
       places2[i].transform(places2[i].dir);
     }
   }
@@ -372,7 +397,9 @@ function drawLeftHalf() {
 
   bar.displayAt(250, 85, 180);
   bar.update();
-  if (bar.f >= bar.l) isDead = true;
+  if (bar.f >= bar.l) {
+    isDead = true;
+  }
 
   displayPlaces();
   player.display();
@@ -406,7 +433,9 @@ function drawRightHalf() {
 
   bar2.displayAt(250, 85, 180);
   bar2.update();
-  if (bar2.f >= bar2.l) isDead2 = true;
+  if (bar2.f >= bar2.l) {
+    isDead2 = true;
+  }
 
   displayPlaces2();
   player2.display();
@@ -450,23 +479,27 @@ function drawCompetitionOver() {
     // P1 died, P2 still alive, check if scores are equal
     if (points === points2) {
       winner = null;
-    } else {
+    }
+    else {
       winner = currentUser2; 
       winPoints = points2;
       loser = currentUser;  
       losePoints = points;
     }
-  } else if (isDead2 && !isDead) {
+  }
+  else if (isDead2 && !isDead) {
     // P2 died, P1 still alive, check if scores are equal
     if (points === points2) {
       winner = null;
-    } else {
+    }
+    else {
       winner = currentUser;  
       winPoints = points;
       loser = currentUser2; 
       losePoints = points2;
     }
-  } else {
+  }
+  else {
     // Both died on the same frame
     winner = null;
   }
@@ -485,7 +518,8 @@ function drawCompetitionOver() {
     textSize(20);
     fill(darkMode ? 200 : 50);
     text(`${winner}: ${winPoints} pts   |   ${loser}: ${losePoints} pts`, width / 2, height / 2);
-  } else {
+  }
+  else {
     textSize(28);
     fill(darkMode ? 200 : 80);
     text("It's a tie!", width / 2, height / 2 - 45);
@@ -527,7 +561,8 @@ class Place {
     fill("red");
     if (this.dir === "left") {
       rect(this.x - 20, this.y, 10, this.l);
-    } else {
+    }
+    else {
       rect(this.x + 20, this.y, 10, this.l);
     }
   }
@@ -535,16 +570,22 @@ class Place {
   spawn() {
     if (this.y < height / 2) {
       this.y += this.v;
-    } else {
+    }
+    else {
       this.active = true;
     }
   }
 
   transform(dir) {
     if (dir === "left") {
-      if (this.x > 75) this.x -= this.v / 2;
-    } else {
-      if (this.x < 425) this.x += this.v / 2; // Fixed: clamped to 500px half
+      if (this.x > 75) {
+        this.x -= this.v / 2;
+      }
+    }
+    else {
+      if (this.x < 425) {
+        this.x += this.v / 2;
+      } // Fixed: clamped to 500px half
     }
   }
 
@@ -552,7 +593,8 @@ class Place {
   move(dir) {
     if (dir !== this.dir) {
       isDead = true;
-    } else {
+    }
+    else {
       bar.f = 0;
       this.guessed = true;
       places.unshift(new Place());
@@ -565,7 +607,8 @@ class Place {
   move2(dir) {
     if (dir !== this.dir) {
       isDead2 = true;
-    } else {
+    }
+    else {
       bar2.f = 0;
       this.guessed = true;
       places2.unshift(new Place());
@@ -598,13 +641,14 @@ class Bar {
     noStroke();
     fill(204, 0, 0);
     rectMode(CORNER);
-    rect(cx - len / 2, cy - len / 40, (this.f / this.l) * len, len / 20);
+    rect(cx - len / 2, cy - len / 40, this.f / this.l * len, len / 20);
   }
 
   update() {
     if (this.f < this.l) {
       this.f += 3.2;
-    } else {
+    }
+    else {
       isDead = true;
     }
   }
