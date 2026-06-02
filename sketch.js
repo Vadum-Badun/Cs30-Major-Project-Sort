@@ -6,6 +6,10 @@
 //https://www.reddit.com/r/p5js/comments/1jdtnfr/how_to_remove_input_box/ 
 // https://stackoverflow.com/questions/48936886/how-do-i-save-an-array-to-a-file-and-manipulate-it-from-within-my-code 
 
+//https://youtu.be/rO6M5hj0V-o?si=OcZoJpO0Thbp15Vs
+
+//https://youtu.be/UdoycJEUjjE?si=yi-3zvC_gbAwWtgG
+
 //LOCAL STORAGES:
 //https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem
 //https://blog.logrocket.com/localstorage-javascript-complete-guide/
@@ -472,7 +476,7 @@ function drawRightHalf() {
   }
 
   displayPlaces2();
-  // Removes player2.display()
+  //Removes player2.display()
   pop();
 }
 
