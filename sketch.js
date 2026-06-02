@@ -137,7 +137,8 @@ function setup() {
 function windowResized() {
   if (gameMode === "competition") {
     resizeCanvas(windowWidth, windowHeight);
-  } else {
+  }
+  else {
     resizeCanvas(windowWidth, windowHeight);
   }
 }
@@ -366,7 +367,8 @@ function displayPlaces() {
     
     if (!places[i].active) {
       places[i].spawn();
-    } else if (places[i].guessed) {
+    }
+    else if (places[i].guessed) {
       places[i].transform();
     }
   }
@@ -379,7 +381,8 @@ function displayPlaces2() {
     
     if (!places2[i].active) {
       places2[i].spawn();
-    } else if (places2[i].guessed) {
+    }
+    else if (places2[i].guessed) {
       places2[i].transform();
     }
   }
@@ -430,7 +433,9 @@ function drawLeftHalf() {
 
   bar.displayAt(width/4, height * 0.06, width * 0.18);
   bar.update();
-  if (bar.f >= bar.l) isDead = true;
+  if (bar.f >= bar.l) {
+    isDead = true;
+  }
 
   displayPlaces();
   //Removes player.display()
@@ -462,7 +467,9 @@ function drawRightHalf() {
 
   bar2.displayAt(width/4, height * 0.06, width * 0.18);
   bar2.update();
-  if (bar2.f >= bar2.l) isDead2 = true;
+  if (bar2.f >= bar2.l) {
+    isDead2 = true;
+  }
 
   displayPlaces2();
   // Removes player2.display()
@@ -518,7 +525,7 @@ class Place {
   }
 
   display() {
-    let img = this.isWalking ? (this.type === "dog" ? dogImgs.walk : catImgs.walk) : (this.type === "dog" ? dogImgs.idle : catImgs.idle);
+    let img = this.isWalking ? this.type === "dog" ? dogImgs.walk : catImgs.walk : this.type === "dog" ? dogImgs.idle : catImgs.idle;
     imageMode(CENTER);
     image(img, this.x, this.y, this.l, this.l);
   }
@@ -527,7 +534,8 @@ class Place {
     //If the animal reaches the mat position mark it active
     if (this.y < height * 0.7) {
       this.y += this.v;
-    } else {
+    }
+    else {
       this.active = true;
     }
   }
@@ -536,19 +544,23 @@ class Place {
   transform() {
     this.isWalking = true;
     // Dogs go left, cats go right
-    let correctDir = (this.type === "dog") ? "left" : "right";
+    let correctDir = this.type === "dog" ? "left" : "right";
     if (correctDir === "left") {
-      if (this.x > width * 0.15) this.x -= this.v / 2;
+      if (this.x > width * 0.15) {
+        this.x -= this.v / 2;
+      }
     }
     else {
-      if (this.x < width * 0.85) this.x += this.v / 2;
+      if (this.x < width * 0.85) {
+        this.x += this.v / 2;
+      }
     }
   }
 
   //Move for the first player
   move(dir) {
     //if cat type is chosen right is correct.
-    let correctDir = (this.type === "dog") ? "left" : "right";
+    let correctDir = this.type === "dog" ? "left" : "right";
     
     if (dir !== correctDir) {
       isDead = true;
@@ -564,7 +576,7 @@ class Place {
 
   //Move for second player
   move2(dir) {
-    let correctDir = (this.type === "dog") ? "left" : "right";
+    let correctDir = this.type === "dog" ? "left" : "right";
     if (dir !== correctDir) {
       isDead2 = true;
     }
@@ -587,7 +599,9 @@ class Bar {
     this.f = 0;
   }
 
-  display() { this.displayAt(this.x, this.y, this.l); }
+  display() {
+    this.displayAt(this.x, this.y, this.l); 
+  }
 
   displayAt(cx, cy, len) {
     strokeWeight(4);
@@ -602,8 +616,12 @@ class Bar {
   }
 
   update() {
-    if (this.f < this.l) this.f += 4.5;
-    else isDead = true;
+    if (this.f < this.l) {
+      this.f += 4.5;
+    }
+    else {
+      isDead = true;
+    }
   }
 }
 
@@ -615,7 +633,7 @@ class Player {
   }
   display() {
     let p = places[0];
-    let img = (p.type === "dog") ? dogImgs.idle : catImgs.idle;
+    let img = p.type === "dog" ? dogImgs.idle : catImgs.idle;
     imageMode(CENTER);
     image(img, this.x, this.y, 80, 80);
   }
@@ -629,7 +647,7 @@ class Player2 {
   }
   display() {
     let p = places2[0];
-    let img = (p.type === "dog") ? dogImgs.idle : catImgs.idle;
+    let img = p.type === "dog" ? dogImgs.idle : catImgs.idle;
     imageMode(CENTER);
     image(img, this.x, this.y, 80, 80);
   }
