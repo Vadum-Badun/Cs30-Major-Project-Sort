@@ -6,10 +6,6 @@
 //https://www.reddit.com/r/p5js/comments/1jdtnfr/how_to_remove_input_box/ 
 // https://stackoverflow.com/questions/48936886/how-do-i-save-an-array-to-a-file-and-manipulate-it-from-within-my-code 
 
-//https://youtu.be/rO6M5hj0V-o?si=OcZoJpO0Thbp15Vs
-
-//https://youtu.be/UdoycJEUjjE?si=yi-3zvC_gbAwWtgG
-
 //LOCAL STORAGES:
 //https://developer.mozilla.org/en-US/docs/Web/API/Storage/setItem
 //https://blog.logrocket.com/localstorage-javascript-complete-guide/
@@ -42,16 +38,15 @@ let currentUser = null;
 
 let gameStart = false;
 
-//Assets(simply imgages)
+//Assets
 let bgImg;
 let catImgs = {};
 let dogImgs = {};
 
-// -------------------------------------------------------------------- GAME MODE ---------------------------------------------------
 //Single player or competitiom
 let gameMode = null;
 
-//Competition Player2
+//Competition mode Player2
 let player2;
 let isDead2 = false;
 let places2 = [];
@@ -66,6 +61,8 @@ let btnCompete;
 
 //Second name input
 let submitButton2;
+
+//Music let bgMusic;
 
 // -------------------------------------------------------------------- LOCAL STORAGE ---------------------------------------------------
 let storage = {
@@ -93,14 +90,16 @@ let storage = {
 };
 
 // -------------------------------------------------------------------- PRELOAD SECTION ---------------------------------------------------
-let bgMusic;
+
 function preload() {
+
+  //Load Music
   bgMusic = loadSound('https://cdn.freecodecamp.org/curriculum/js-music-player/scratching-the-surface.mp3');
   
   //Load background
   bgImg = loadImage('back_image.png');
   
-  //Load cat images
+  // Loadcat images
   catImgs.idle = loadImage('brit_cat.png');
   catImgs.walk = loadImage('brit_walk.png');
   
@@ -116,20 +115,16 @@ function setup() {
   bar = new Bar();
   places.push(new Place());
 
-  //Load storage and start the music
   storage.loadUsers();
   bgMusic.loop();
 
-  //Input UI
   myInput = createInput('Enter your name');
   myInput.position(windowWidth / 2 - 90, windowHeight / 2);
 
-  //Button UI
   submitButton = createButton('Submit');
   submitButton.position(windowWidth / 2 - 30, windowHeight / 2 + 50);
   submitButton.mousePressed(saveInput);
 
-  //Dark Mode UI
   darkModeToggle = createCheckbox(' Dark Mode', false);
   darkModeToggle.position(windowWidth / 2 - 90, windowHeight / 2 + 85);
   darkModeToggle.changed(() => {
@@ -137,12 +132,10 @@ function setup() {
   });
 }
 
-//Resizing window if users changes its size
 function windowResized() {
   if (gameMode === "competition") {
     resizeCanvas(windowWidth, windowHeight);
-  }
-  else {
+  } else {
     resizeCanvas(windowWidth, windowHeight);
   }
 }
@@ -175,6 +168,7 @@ function draw() {
       runningCompetition();
       return;
     }
+
     if (currentUser !== null) {
       storage.updateBestScore(currentUser, points);
     }
@@ -227,7 +221,6 @@ function drawModeSelect() {
   textSize(22);
   text(`Hi, ${currentUser}! Choose a mode:`, width / 2, height / 2 - 60);
 }
-
 //Saving user input
 function saveInput() {
   let userInput = myInput.value();
@@ -249,7 +242,6 @@ function saveInput() {
 
   showModeButtons();
 }
-
 //Showing mode buttons
 function showModeButtons() {
   btnSingle = createButton('Single Player');
@@ -259,8 +251,8 @@ function showModeButtons() {
   btnCompete = createButton('Competition (2 players)');
   btnCompete.position(width / 2 - 110, height / 2 + 45);
   btnCompete.mousePressed(showPlayer2Input);
-}
 
+}
 //Play as single-player
 function startSingle() {
   btnSingle.remove();
@@ -285,7 +277,6 @@ function showPlayer2Input() {
   submitButton2.position(width / 2 - 65, height / 2 + 50);
   submitButton2.mousePressed(startCompetition);
 }
-
 //Start game as competition
 function startCompetition() {
   let name2 = myInput2.value().trim();
@@ -306,7 +297,11 @@ function startCompetition() {
   resizeCanvas(windowWidth, windowHeight);
   player2 = new Player2();
   bar2 = new Bar();
-  places2.push(new Place());
+  //Reset first player places to use
+  places = [];
+  places.push(new Place(width / 4));
+  bar.f = 0;
+  places2.push(new Place(width / 4));
 
   gameMode = "competition";
   gameStart = true;
@@ -344,14 +339,14 @@ function runningCompetition() {
 function restart() {
   points = 0;
   places = [];
-  places.push(new Place());
+  places.push(new Place(gameMode === "competition" ? width / 4 : width / 2));
   bar.f = 0;
   isDead = false;
 
   if (gameMode === "competition") {
     points2 = 0;
     places2 = [];
-    places2.push(new Place());
+    places2.push(new Place(width / 4));
     bar2.f = 0;
     isDead2 = false;
   }
@@ -364,34 +359,39 @@ function restart() {
 }
 
 // --------------------------------------------------------------- DISPLAYING -----------------------------------------------------------
+//Displays animals for the first Player
 function displayPlaces() {
   for (let i = 0; i < places.length; i++) {
-    //Draw the falling animal
+    // Removed the cyan ellipse
+    
+    // Draw the falling animal
     places[i].display();
     
     if (!places[i].active) {
       places[i].spawn();
-    }
-    else if (places[i].guessed) {
+    } else if (places[i].guessed) {
       places[i].transform();
     }
   }
 }
+
+//Displays animals for the second Player
 function displayPlaces2() {
   for (let i = 0; i < places2.length; i++) {
-
-    //Draw the falling animal
+    //Removed the cyan ellipse
+    
+    //Draw the falling animal (will disappear when active)
     places2[i].display();
     
     if (!places2[i].active) {
       places2[i].spawn();
-    }
-    else if (places2[i].guessed) {
+    } else if (places2[i].guessed) {
       places2[i].transform();
     }
   }
 }
 
+//Shows the control buttons
 function displayUI() {
   bar.display();
   bar.update();
@@ -408,7 +408,7 @@ function displayUI() {
 }
 
 // --------------------------------------------------------------- SPLIT SCREEN -----------------------------------------------------------
-//Draws the screen for the first player
+//Draws the side of first Player
 function drawLeftHalf() {
   push();
   imageMode(CORNER);
@@ -437,16 +437,14 @@ function drawLeftHalf() {
 
   bar.displayAt(width/4, height * 0.06, width * 0.18);
   bar.update();
-  if (bar.f >= bar.l) {
-    isDead = true;
-  }
+  if (bar.f >= bar.l) isDead = true;
 
   displayPlaces();
-  //Removes player.display()
+  // Removed player.display()
   pop();
 }
 
-//Draws screen for Second Player
+//Draws the side of Player2
 function drawRightHalf() {
   push();
   translate(width/2, 0);
@@ -471,17 +469,14 @@ function drawRightHalf() {
 
   bar2.displayAt(width/4, height * 0.06, width * 0.18);
   bar2.update();
-  if (bar2.f >= bar2.l) {
-    isDead2 = true;
-  }
+  if (bar2.f >= bar2.l) isDead2 = true;
 
   displayPlaces2();
-  //Removes player2.display()
+  //Removed player2.display()
   pop();
 }
 
 // --------------------------------------------------------------- DEATH SCREENS -----------------------------------------------------------
-//Game over for single-player
 function drawDeathScreen() {
   background(darkMode ? 30 : 220);
   textAlign(CENTER);
@@ -498,7 +493,6 @@ function drawDeathScreen() {
   }
 }
 
-//Game over for multiplayer
 function drawCompetitionOver() {
   background(darkMode ? 30 : 220);
   textAlign(CENTER);
@@ -506,6 +500,16 @@ function drawCompetitionOver() {
   textSize(36);
   text("GAME OVER", width / 2, height / 2 - 90);
   
+  //Shows up the winner
+  textSize(28);
+  if (points > points2) {
+    text(`${currentUser} wins with ${points} points!`, width / 2, height / 2 - 40);
+  } else if (points2 > points) {
+    text(`${currentUser2} wins with ${points2} points!`, width / 2, height / 2 - 40);
+  } else {
+    text(`It's a tie! Both scored ${points} points.`, width / 2, height / 2 - 40);
+  }
+
   if (button === null) {
     button = createButton('Play Again');
     button.position(width / 2 - 50, height / 2 + 60);
@@ -514,13 +518,14 @@ function drawCompetitionOver() {
 }
 
 // ---------------------------------------------------------------------- CLASSES -------------------------------------------------------
-//This class determines the direction of animals, how they look, switch, etc.
+//Simply: directing animals, playing their animation, determine which whey they go
 class Place {
-  constructor() {
+  constructor(xCenter) {
     this.l = 120;
-    this.x = width / 2;
+    this.xCenter = xCenter !== undefined ? xCenter : width / 2;
+    this.x = this.xCenter;
     this.y = 50;
-    this.v = 17;
+    this.v = 5;
     this.active = false;
     this.guessed = false;
     this.dir = random() < 0.5 ? "left" : "right";
@@ -529,42 +534,36 @@ class Place {
   }
 
   display() {
-    let img = this.isWalking ? this.type === "dog" ? dogImgs.walk : catImgs.walk : this.type === "dog" ? dogImgs.idle : catImgs.idle;
+    let img = this.isWalking ? (this.type === "dog" ? dogImgs.walk : catImgs.walk) : (this.type === "dog" ? dogImgs.idle : catImgs.idle);
     imageMode(CENTER);
     image(img, this.x, this.y, this.l, this.l);
   }
 
   spawn() {
-    //If the animal reaches the mat position mark it active
+    //If the animal reaches the mat position, mark it as active
     if (this.y < height * 0.7) {
       this.y += this.v;
-    }
-    else {
+    } else {
       this.active = true;
     }
   }
 
-  //Simply: animation of animals going to the side
   transform() {
     this.isWalking = true;
-    // Dogs go left, cats go right
-    let correctDir = this.type === "dog" ? "left" : "right";
+    //Dogs go left, cats go right
+    let correctDir = (this.type === "dog") ? "left" : "right";
+    let halfW = this.xCenter * 2;
     if (correctDir === "left") {
-      if (this.x > width * 0.15) {
-        this.x -= this.v / 2;
-      }
+      if (this.x > halfW * 0.15) this.x -= this.v / 2;
     }
     else {
-      if (this.x < width * 0.85) {
-        this.x += this.v / 2;
-      }
+      if (this.x < halfW * 0.85) this.x += this.v / 2;
     }
   }
 
-  //Move for the first player
   move(dir) {
-    //if cat type is chosen right is correct.
-    let correctDir = this.type === "dog" ? "left" : "right";
+    //if cat type is chosen, right is correct.
+    let correctDir = (this.type === "dog") ? "left" : "right";
     
     if (dir !== correctDir) {
       isDead = true;
@@ -572,29 +571,28 @@ class Place {
     else {
       bar.f = 0;
       this.guessed = true;
-      places.unshift(new Place());
+      places.unshift(new Place(this.xCenter));
       places.splice(2, 1);
       points++;
     }
   }
 
-  //Move for second player
   move2(dir) {
-    let correctDir = this.type === "dog" ? "left" : "right";
+    let correctDir = (this.type === "dog") ? "left" : "right";
     if (dir !== correctDir) {
       isDead2 = true;
     }
     else {
       bar2.f = 0;
       this.guessed = true;
-      places2.unshift(new Place());
+      places2.unshift(new Place(this.xCenter));
       places2.splice(2, 1);
       points2++;
     }
   }
 }
 
-//Health bar
+//Health Bar
 class Bar {
   constructor() {
     this.x = width / 2;
@@ -603,9 +601,7 @@ class Bar {
     this.f = 0;
   }
 
-  display() {
-    this.displayAt(this.x, this.y, this.l); 
-  }
+  display() { this.displayAt(this.x, this.y, this.l); }
 
   displayAt(cx, cy, len) {
     strokeWeight(4);
@@ -620,16 +616,12 @@ class Bar {
   }
 
   update() {
-    if (this.f < this.l) {
-      this.f += 4.5;
-    }
-    else {
-      isDead = true;
-    }
+    if (this.f < this.l) this.f += 1;
+    else isDead = true;
   }
 }
 
-//Shows up the animal in the botttom after it stops falling
+//Shows up animals on left side
 class Player {
   constructor() {
     this.x = 250;
@@ -637,13 +629,13 @@ class Player {
   }
   display() {
     let p = places[0];
-    let img = p.type === "dog" ? dogImgs.idle : catImgs.idle;
+    let img = (p.type === "dog") ? dogImgs.idle : catImgs.idle;
     imageMode(CENTER);
     image(img, this.x, this.y, 80, 80);
   }
 }
 
-//Shows up the animal in the botttom after it stops falling for second Player
+//Shows up animals on right side
 class Player2 {
   constructor() {
     this.x = 250;
@@ -651,7 +643,7 @@ class Player2 {
   }
   display() {
     let p = places2[0];
-    let img = p.type === "dog" ? dogImgs.idle : catImgs.idle;
+    let img = (p.type === "dog") ? dogImgs.idle : catImgs.idle;
     imageMode(CENTER);
     image(img, this.x, this.y, 80, 80);
   }
