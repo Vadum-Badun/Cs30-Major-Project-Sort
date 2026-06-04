@@ -15,8 +15,7 @@ For my project, I decided to to continue building a game from my first assignmen
 - Multiplayer(Cancelled, compromise with coop)
 - Competition mode(done)
 - Music Switching
-- Upload the Music(if possible)(50/50)
-- Skins(In Progress)
+- Upload the Music(I'll make it as a separate menu)(50/50)
 - Easter Eggs
 
 //MUSIC

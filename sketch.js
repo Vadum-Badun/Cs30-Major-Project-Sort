@@ -122,11 +122,11 @@ function setup() {
   myInput.position(windowWidth / 2 - 90, windowHeight / 2);
 
   submitButton = createButton('Submit');
-  submitButton.position(windowWidth / 2 - 30, windowHeight / 2 + 50);
+  submitButton.position(windowWidth / 2 - 90, windowHeight / 2 + 50);
   submitButton.mousePressed(saveInput);
 
   darkModeToggle = createCheckbox(' Dark Mode', false);
-  darkModeToggle.position(windowWidth / 2 - 90, windowHeight / 2 + 85);
+  darkModeToggle.position(windowWidth / 2 - 90, windowHeight / 2 + 70);
   darkModeToggle.changed(() => {
     darkMode = darkModeToggle.checked();
   });
@@ -246,11 +246,11 @@ function saveInput() {
 //Showing mode buttons
 function showModeButtons() {
   btnSingle = createButton('Single Player');
-  btnSingle.position(width / 2 - 110, height / 2);
+  btnSingle.position(width / 2 - 110, height / 2 - 70);
   btnSingle.mousePressed(startSingle);
 
   btnCompete = createButton('Competition (2 players)');
-  btnCompete.position(width / 2 - 110, height / 2 + 45);
+  btnCompete.position(width / 2 - 210, height / 2 + 10);
   btnCompete.mousePressed(showPlayer2Input);
 
 }
@@ -275,7 +275,7 @@ function showPlayer2Input() {
   myInput2.position(width / 2 - 90, height / 2);
 
   submitButton2 = createButton('Start Competition');
-  submitButton2.position(width / 2 - 65, height / 2 + 50);
+  submitButton2.position(width / 2 - 185, height / 2 + 20);
   submitButton2.mousePressed(startCompetition);
 }
 //Start game as competition
@@ -495,7 +495,7 @@ function drawDeathScreen() {
   
   if (button === null) {
     button = createButton('Play Again');
-    button.position(width / 2 - 50, height / 2 + 45);
+    button.position(width / 2 - 120, height / 2 + 45);
     button.mousePressed(restart);
   }
 }
@@ -521,7 +521,7 @@ function drawCompetitionOver() {
 
   if (button === null) {
     button = createButton('Play Again');
-    button.position(width / 2 - 50, height / 2 + 60);
+    button.position(width / 2 - 120, height / 2 + 60);
     button.mousePressed(restart);
   }
 }
