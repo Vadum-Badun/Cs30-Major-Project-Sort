@@ -551,7 +551,7 @@ class Place {
   spawn() {
     //If the animal reaches the mat position, mark it as active
     if (this.y < height * 0.7) {
-      this.y += this.v;
+      this.y += this.v + 13; 
     }
     else {
       this.active = true;
@@ -565,12 +565,12 @@ class Place {
     let halfW = this.xCenter * 2;
     if (correctDir === "left") {
       if (this.x > halfW * 0.15) {
-        this.x -= this.v / 2;
+        this.x -= this.v / 2 + 7;
       }
     }
     else {
       if (this.x < halfW * 0.85) {
-        this.x += this.v / 2;
+        this.x += this.v / 2 + 7;
       }
     }
   }
@@ -633,7 +633,7 @@ class Bar {
 
   update() {
     if (this.f < this.l) {
-      this.f += 1;
+      this.f += 5;
     }
     else {
       isDead = true;
