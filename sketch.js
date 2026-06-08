@@ -17,6 +17,8 @@
 //Music upload, I gotta work on it hard I guess
 //https://firebase.google.com/products/hosting?utm_source=chatgpt.com
 
+//Might use it ot create leader board, idk
+
 //---------------------------------END OF CREDENTIALS---------------------------------------------------------------------------
 
 //Player

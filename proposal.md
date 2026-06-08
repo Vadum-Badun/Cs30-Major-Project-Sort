@@ -14,9 +14,9 @@ For my project, I decided to to continue building a game from my first assignmen
 ## Nice to Have
 - Multiplayer(Cancelled, compromise with coop)
 - Competition mode(done)
-- Music Switching
+- Music Switching(in progress)
 - Upload the Music(I'll make it as a separate menu)(50/50)
-- Easter Eggs
+- Easter Eggs(in progress)
 
 //MUSIC
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
