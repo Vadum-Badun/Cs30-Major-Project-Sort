@@ -14,6 +14,9 @@
 //https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt 
 
+//Music upload, I gotta work on it hard I guess
+//https://firebase.google.com/products/hosting?utm_source=chatgpt.com
+
 //---------------------------------END OF CREDENTIALS---------------------------------------------------------------------------
 
 //Player
@@ -37,6 +40,7 @@ let myInput;
 let currentUser = null;
 
 let gameStart = false;
+let passwordMode = false;
 
 //Assets
 let bgImg;
@@ -228,18 +232,44 @@ function saveInput() {
   if (userInput === '') {
     return;
   }
-
   currentUser = userInput;
 
-  if (!userList.includes(userInput)) {
+  if (!userList.includes(userInput) && passwordMode) {
     userList.push(userInput);
     storage.saveUsers();
+    if(userInput.value() === "Vadym"){
+      passwordMode = true;
+    }
   }
+  if(userInput !== "Vadym"){
+    myInput.remove();
+    submitButton.remove();
+    darkModeToggle.remove();
+    myInput.value('');
+  }
+  else if(passwordMode === true){
+    myInput.remove();
+    submitButton.remove();
+    darkModeToggle.remove();
+    myInput = createInput("Enter the password");
+    myInput.position(windowWidth / 2 - 90, windowHeight / 2);
 
-  myInput.remove();
-  submitButton.remove();
-  darkModeToggle.remove();
-  myInput.value('');
+    submitButton = createButton('Submit');
+    submitButton.position(windowWidth / 2 - 90, windowHeight / 2 + 50);
+    submitButton.mousePressed(saveInput);
+
+    if(myInput.value() === "228"){
+      text("Welcome the Creator!");
+      text.position(windowWidth / 2 - 90, windowHeight / 2 + 50);
+
+      myInput.remove();
+      submitButton.remove();
+      darkModeToggle.remove();
+      myInput.value('');
+    }
+  }
+  
+
 
   showModeButtons();
 }
