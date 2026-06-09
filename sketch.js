@@ -42,7 +42,6 @@ let myInput;
 let currentUser = null;
 
 let gameStart = false;
-let passwordMode = false;
 
 //Assets
 let bgImg;
@@ -67,9 +66,6 @@ let btnCompete;
 
 //Second name input
 let submitButton2;
-
-//Music let bgMusic;
-
 // -------------------------------------------------------------------- LOCAL STORAGE ---------------------------------------------------
 let storage = {
   saveUsers() {
@@ -239,40 +235,12 @@ function saveInput() {
   if (!userList.includes(userInput) && passwordMode) {
     userList.push(userInput);
     storage.saveUsers();
-    if(userInput.value() === "Vadym"){
-      passwordMode = true;
-    }
   }
-  if(userInput !== "Vadym"){
-    myInput.remove();
-    submitButton.remove();
-    darkModeToggle.remove();
-    myInput.value('');
-  }
-  else if(passwordMode === true){
-    myInput.remove();
-    submitButton.remove();
-    darkModeToggle.remove();
-    myInput = createInput("Enter the password");
-    myInput.position(windowWidth / 2 - 90, windowHeight / 2);
 
-    submitButton = createButton('Submit');
-    submitButton.position(windowWidth / 2 - 90, windowHeight / 2 + 50);
-    submitButton.mousePressed(saveInput);
-
-    if(myInput.value() === "228"){
-      text("Welcome the Creator!");
-      text.position(windowWidth / 2 - 90, windowHeight / 2 + 50);
-
-      myInput.remove();
-      submitButton.remove();
-      darkModeToggle.remove();
-      myInput.value('');
-    }
-  }
-  
-
-
+  myInput.remove();
+  submitButton.remove();
+  darkModeToggle.remove();
+  myInput.value('');
   showModeButtons();
 }
 //Showing mode buttons
