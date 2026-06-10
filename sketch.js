@@ -1,4 +1,4 @@
-// Major Project
+// Raining like cats and dogs
 // Vadym Kolomiiets
 
 // --------------------------CREDENTIALS SECTION----------------------------------------------------------------------------------------------
@@ -16,9 +16,6 @@
 
 //Music upload, I gotta work on it hard I guess
 //https://firebase.google.com/products/hosting?utm_source=chatgpt.com
-
-//Might use it ot create leader board, idk
-
 //---------------------------------END OF CREDENTIALS---------------------------------------------------------------------------
 
 //Player
@@ -48,8 +45,13 @@ let bgImg;
 let catImgs = {};
 let dogImgs = {};
 
-//Single player or competitiom
+//Single player or competition
 let gameMode = null;
+
+//Levels
+let chosenLevel = 1;
+let levelUp = false;
+let lastCheckpoint = 0;
 
 //Competition mode Player2
 let player2;
@@ -64,8 +66,15 @@ let myInput2;
 let btnSingle;
 let btnCompete;
 
+//Stores level selection buttons
+let levelButtons = []; 
+
 //Second name input
 let submitButton2;
+
+//God mode
+let barPaused = false;
+
 // -------------------------------------------------------------------- LOCAL STORAGE ---------------------------------------------------
 let storage = {
   saveUsers() {
@@ -96,15 +105,15 @@ let storage = {
 function preload() {
 
   //Load Music
-  bgMusic = loadSound('https://cdn.freecodecamp.org/curriculum/js-music-player/scratching-the-surface.mp3');
-  
+  bgMusic = loadSound('Metallica.mp3');
+
   //Load background
   bgImg = loadImage('back_image.png');
-  
-  // Loadcat images
+
+  //Load cat images
   catImgs.idle = loadImage('brit_cat.png');
   catImgs.walk = loadImage('brit_walk.png');
-  
+
   //Load dog images
   dogImgs.idle = loadImage('gold_dog_stand.png');
   dogImgs.walk = loadImage('gold_dog_walk.png');
@@ -135,12 +144,7 @@ function setup() {
 }
 
 function windowResized() {
-  if (gameMode === "competition") {
-    resizeCanvas(windowWidth, windowHeight);
-  }
-  else {
-    resizeCanvas(windowWidth, windowHeight);
-  }
+  resizeCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
@@ -152,6 +156,10 @@ function draw() {
 
   //Single-player
   if (gameMode === "single") {
+    if (levelUp) {
+      drawLevelUpScreen();
+      return;
+    }
     if (!isDead) {
       running();
     }
@@ -184,6 +192,13 @@ function draw() {
 }
 
 function keyPressed() {
+
+  //For God mode
+
+  if (key === 'g' || key === 'G') {
+    barPaused = !barPaused;
+  }
+
   //Single player controls
   if (gameMode === "single" && !isDead && places[0].active) {
     if (key === 'a' || key === 'A') {
@@ -224,6 +239,7 @@ function drawModeSelect() {
   textSize(22);
   text(`Hi, ${currentUser}! Choose a mode:`, width / 2, height / 2 - 60);
 }
+
 //Saving user input
 function saveInput() {
   let userInput = myInput.value();
@@ -232,7 +248,7 @@ function saveInput() {
   }
   currentUser = userInput;
 
-  if (!userList.includes(userInput) && passwordMode) {
+  if (!userList.includes(userInput)) {
     userList.push(userInput);
     storage.saveUsers();
   }
@@ -240,26 +256,42 @@ function saveInput() {
   myInput.remove();
   submitButton.remove();
   darkModeToggle.remove();
-  myInput.value('');
   showModeButtons();
 }
+
 //Showing mode buttons
 function showModeButtons() {
   btnSingle = createButton('Single Player');
   btnSingle.position(width / 2 - 110, height / 2 - 70);
-  btnSingle.mousePressed(startSingle);
+  btnSingle.mousePressed(showLevelButtons);
 
   btnCompete = createButton('Competition (2 players)');
   btnCompete.position(width / 2 - 210, height / 2 + 10);
   btnCompete.mousePressed(showPlayer2Input);
-
 }
-//Play as single-player
-function startSingle() {
+
+//Show level selection buttons
+function showLevelButtons() {
   btnSingle.remove();
   btnCompete.remove();
   btnSingle = null;
   btnCompete = null;
+
+  for (let i = 1; i <= 10; i++) {
+    let b = createButton('' + i);
+    b.position(width / 2 - 270 + (i * 55), height / 2);
+    b.mousePressed(() => startSingle(i));
+    levelButtons.push(b);
+  }
+}
+
+//Play as single-player with chosen level
+function startSingle(lvl) {
+  for (let b of levelButtons) {
+    b.remove();
+  }
+  levelButtons = [];
+  chosenLevel = lvl;
   gameMode = "single";
   gameStart = true;
 }
@@ -278,6 +310,7 @@ function showPlayer2Input() {
   submitButton2.position(width / 2 - 185, height / 2 + 20);
   submitButton2.mousePressed(startCompetition);
 }
+
 //Start game as competition
 function startCompetition() {
   let name2 = myInput2.value().trim();
@@ -298,7 +331,8 @@ function startCompetition() {
   resizeCanvas(windowWidth, windowHeight);
   player2 = new Player2();
   bar2 = new Bar();
-  //Reset first player places to use
+
+  //Reset first player places to use left half
   places = [];
   places.push(new Place(width / 4));
   bar.f = 0;
@@ -319,7 +353,6 @@ function running() {
 
   if (!isDead && userList.length > 0) {
     displayPlaces();
-    // Removed player.display() — Place handles the falling animal
     displayUI();
 
     if (currentUser !== null) {
@@ -327,18 +360,22 @@ function running() {
       textAlign(CENTER);
       textSize(22);
       fill(darkMode ? 200 : 30);
-      text(`Best: ${best} | Player: ${currentUser}`, width / 2, 30);
+      text(`Best: ${best} | Player: ${currentUser} | Lvl: ${chosenLevel}`, width / 2, 30);
     }
   }
 }
+
 //Makes competition work
 function runningCompetition() {
   drawLeftHalf();
   drawRightHalf();
 }
+
 //Restarts the game
 function restart() {
   points = 0;
+  lastCheckpoint = 0;
+  levelUp = false;
   places = [];
   places.push(new Place(gameMode === "competition" ? width / 4 : width / 2));
   bar.f = 0;
@@ -363,11 +400,8 @@ function restart() {
 //Displays animals for the first Player
 function displayPlaces() {
   for (let i = 0; i < places.length; i++) {
-    // Removed the cyan ellipse
-    
-    // Draw the falling animal
     places[i].display();
-    
+
     if (!places[i].active) {
       places[i].spawn();
     }
@@ -380,11 +414,8 @@ function displayPlaces() {
 //Displays animals for the second Player
 function displayPlaces2() {
   for (let i = 0; i < places2.length; i++) {
-    //Removed the cyan ellipse
-    
-    //Draw the falling animal (will disappear when active)
     places2[i].display();
-    
+
     if (!places2[i].active) {
       places2[i].spawn();
     }
@@ -394,7 +425,7 @@ function displayPlaces2() {
   }
 }
 
-//Shows the control buttons
+//Shows the score bar and controls hint
 function displayUI() {
   bar.display();
   bar.update();
@@ -415,17 +446,17 @@ function displayUI() {
 function drawLeftHalf() {
   push();
   imageMode(CORNER);
-  image(bgImg, 0, 0, width/2, height);
+  image(bgImg, 0, 0, width / 2, height);
 
   stroke(darkMode ? 160 : 80);
   strokeWeight(2);
-  line(width/2, 0, width/2, height);
+  line(width / 2, 0, width / 2, height);
   noStroke();
 
   textAlign(CENTER);
   textSize(20);
   fill(darkMode ? 180 : 60);
-  text(`P1: ${currentUser}  |  A = Left  D = Right`, width/4, height - 20);
+  text(`P1: ${currentUser}  |  A = Left  D = Right`, width / 4, height - 20);
 
   textSize(28);
   fill(darkMode ? 220 : 30);
@@ -436,30 +467,26 @@ function drawLeftHalf() {
   textAlign(CENTER);
   textSize(22);
   fill(darkMode ? 180 : 50);
-  text(`Best: ${best}`, width/4, 30);
+  text(`Best: ${best}`, width / 4, 30);
 
-  bar.displayAt(width/4, height * 0.06, width * 0.18);
+  bar.displayAt(width / 4, height * 0.06, width * 0.18);
   bar.update();
-  if (bar.f >= bar.l) {
-    isDead = true;
-  }
 
   displayPlaces();
-  // Removed player.display()
   pop();
 }
 
 //Draws the side of Player2
 function drawRightHalf() {
   push();
-  translate(width/2, 0);
+  translate(width / 2, 0);
   imageMode(CORNER);
-  image(bgImg, 0, 0, width/2, height);
+  image(bgImg, 0, 0, width / 2, height);
 
   textAlign(CENTER);
   textSize(20);
   fill(darkMode ? 180 : 60);
-  text(`P2: ${currentUser2}  |  ← = Left  → = Right`, width/4, height - 20);
+  text(`P2: ${currentUser2}  |  ← = Left  → = Right`, width / 4, height - 20);
 
   textSize(28);
   fill(darkMode ? 220 : 30);
@@ -470,20 +497,55 @@ function drawRightHalf() {
   textAlign(CENTER);
   textSize(22);
   fill(darkMode ? 180 : 50);
-  text(`Best: ${best2}`, width/4, 30);
+  text(`Best: ${best2}`, width / 4, 30);
 
-  bar2.displayAt(width/4, height * 0.06, width * 0.18);
+  bar2.displayAt(width / 4, height * 0.06, width * 0.18);
   bar2.update();
-  if (bar2.f >= bar2.l) {
-    isDead2 = true;
-  }
 
   displayPlaces2();
-  //Removed player2.display()
   pop();
 }
 
-// --------------------------------------------------------------- DEATH SCREENS -----------------------------------------------------------
+// --------------------------------------------------------------- LEVEL UP SCREEN -----------------------------------------------------------
+//Draws the level-up pause screen
+function drawLevelUpScreen() {
+  background(darkMode ? 30 : 220);
+  textAlign(CENTER);
+  fill(darkMode ? 220 : 30);
+  textSize(40);
+  text(`Level ${chosenLevel} Complete!`, width / 2, height / 2 - 100);
+  textSize(28);
+  text(`You reached ${points} points!`, width / 2, height / 2 - 50);
+  textSize(22);
+  if (chosenLevel < 10) {
+    text(`Starting Level ${chosenLevel + 1} — choose your difficulty:`, width / 2, height / 2 - 10);
+  }
+  else {
+    text(`Max level reached! Choose a difficulty to keep going:`, width / 2, height / 2 - 10);
+  }
+}
+
+//Creates the level buttons on the level-up screen
+function showLevelUpButtons() {
+  for (let i = 1; i <= 10; i++) {
+    let b = createButton('' + i);
+    b.position(width / 2 - 270 + (i * 55), height / 2 + 30);
+    b.mousePressed(() => resumeFromLevelUp(i));
+    levelButtons.push(b);
+  }
+}
+
+//Resumes gameplay after a level is chosen
+function resumeFromLevelUp(lvl) {
+  for (let b of levelButtons) {
+    b.remove();
+  }
+  levelButtons = [];
+  chosenLevel = lvl;
+  levelUp = false;
+  loop();
+}
+
 function drawDeathScreen() {
   background(darkMode ? 30 : 220);
   textAlign(CENTER);
@@ -492,7 +554,7 @@ function drawDeathScreen() {
   text("Oops, you're dead!", width / 2, height / 2 - 40);
   textSize(30);
   text(`Points : ${points}`, width / 2, height / 2);
-  
+
   if (button === null) {
     button = createButton('Play Again');
     button.position(width / 2 - 120, height / 2 + 45);
@@ -506,7 +568,7 @@ function drawCompetitionOver() {
   fill(darkMode ? 220 : 30);
   textSize(36);
   text("GAME OVER", width / 2, height / 2 - 90);
-  
+
   //Shows up the winner
   textSize(28);
   if (points > points2) {
@@ -527,7 +589,7 @@ function drawCompetitionOver() {
 }
 
 // ---------------------------------------------------------------------- CLASSES -------------------------------------------------------
-//Simply: directing animals, playing their animation, determine which whey they go
+//Simply: directing animals, playing their animation, determine which way they go
 class Place {
   constructor(xCenter) {
     this.l = 120;
@@ -537,13 +599,14 @@ class Place {
     this.v = 5;
     this.active = false;
     this.guessed = false;
-    this.dir = random() < 0.5 ? "left" : "right";
     this.type = random() < 0.5 ? "dog" : "cat";
     this.isWalking = false;
   }
 
   display() {
-    let img = this.isWalking ? this.type === "dog" ? dogImgs.walk : catImgs.walk : this.type === "dog" ? dogImgs.idle : catImgs.idle;
+    let img = this.isWalking
+      ? this.type === "dog" ? dogImgs.walk : catImgs.walk
+      : this.type === "dog" ? dogImgs.idle : catImgs.idle;
     imageMode(CENTER);
     image(img, this.x, this.y, this.l, this.l);
   }
@@ -551,7 +614,7 @@ class Place {
   spawn() {
     //If the animal reaches the mat position, mark it as active
     if (this.y < height * 0.7) {
-      this.y += this.v + 13; 
+      this.y += this.v + 13;
     }
     else {
       this.active = true;
@@ -576,9 +639,9 @@ class Place {
   }
 
   move(dir) {
-    //if cat type is chosen, right is correct.
+    //If cat type is chosen, right is correct
     let correctDir = this.type === "dog" ? "left" : "right";
-    
+
     if (dir !== correctDir) {
       isDead = true;
     }
@@ -588,6 +651,16 @@ class Place {
       places.unshift(new Place(this.xCenter));
       places.splice(2, 1);
       points++;
+
+      //Trigger level-up screen at total score
+      let nextCheckpoint = (Math.floor(lastCheckpoint / 10) + 1) * 10;
+      if (points >= nextCheckpoint && nextCheckpoint <= 100) {
+        lastCheckpoint = nextCheckpoint;
+        chosenLevel = nextCheckpoint / 10;
+        levelUp = true;
+        noLoop();
+        showLevelUpButtons();
+      }
     }
   }
 
@@ -615,8 +688,15 @@ class Bar {
     this.f = 0;
   }
 
+  getSpeed() {
+    //Bar is faster at higher points and level
+    let currentPoints = (this === bar) ? points : points2;
+    let level = Math.floor(currentPoints / 10) + 1 + (chosenLevel - 1);
+    return min(8, 2.5 + (level - 1) * 1.5);
+  }
+
   display() {
-    this.displayAt(this.x, this.y, this.l); 
+    this.displayAt(this.x, this.y, this.l);
   }
 
   displayAt(cx, cy, len) {
@@ -632,11 +712,18 @@ class Bar {
   }
 
   update() {
+    //Enters God mode
+    if (barPaused) return;
+    
     if (this.f < this.l) {
-      this.f += 5;
+      this.f += this.getSpeed();
     }
     else {
-      isDead = true;
+      if (this === bar) {
+        isDead = true;
+      } else {
+        isDead2 = true;
+      }
     }
   }
 }
