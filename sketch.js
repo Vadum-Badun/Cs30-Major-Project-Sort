@@ -165,7 +165,7 @@ function setup() {
   darkModeToggle = createCheckbox(' Dark Mode', false);
   darkModeToggle.position(windowWidth / 2 - 90, windowHeight / 2 + 70);
   darkModeToggle.changed(() => {
-  darkMode = darkModeToggle.checked();
+    darkMode = darkModeToggle.checked();
   });
 }
 
@@ -317,7 +317,7 @@ function showLevelButtons() {
 
   for (let i = 1; i <= 10; i++) {
     let b = createButton('' + i);
-    b.position(width / 2 - 270 + (i * 55), height / 2);
+    b.position(width / 2 - 270 + i * 55, height / 2);
     b.mousePressed(() => startSingle(i));
     levelButtons.push(b);
   }
@@ -645,7 +645,7 @@ function drawLevelUpScreen() {
 function showLevelUpButtons() {
   for (let i = 1; i <= 10; i++) {
     let b = createButton('' + i);
-    b.position(width / 2 - 270 + (i * 55), height / 2 + 30);
+    b.position(width / 2 - 270 + i * 55, height / 2 + 30);
     b.mousePressed(() => resumeFromLevelUp(i));
     levelButtons.push(b);
   }
@@ -806,7 +806,7 @@ class Bar {
 
   getSpeed() {
     //Bar is faster at higher points and level
-    let currentPoints = (this === bar) ? points : points2;
+    let currentPoints = this === bar ? points : points2;
     let level = Math.floor(currentPoints / 10) + 1 + (chosenLevel - 1);
     return min(6, barSpeed + (level - 1) * 1.5);
   }
@@ -829,7 +829,9 @@ class Bar {
 
   update() {
     //Enters God mode
-    if (barPaused) return;
+    if (barPaused) {
+      return;
+    }
     
     if (this.f < this.l) {
       this.f += this.getSpeed();
@@ -837,7 +839,8 @@ class Bar {
     else {
       if (this === bar) {
         isDead = true;
-      } else {
+      }
+      else {
         isDead2 = true;
       }
     }
