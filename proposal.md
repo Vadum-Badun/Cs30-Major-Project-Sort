@@ -4,19 +4,19 @@ For my project, I decided to to continue building a game from my first assignmen
 
 ## Needs to Have
 - Dark Mode(done)
-- Choosing levels(I'll make levels 1-10)
+- Choosing levels(levels 1-10)(done)
 - Visual Design(Switch from Cubes and Circle to cats and dogs)(done)
 - Better Game Logic(More efficient and readable code. Switching to OOP)(done)
-- Leader Board
+- Leader Board(done)
 - Animations(How the animals walk to the side)(done)
 
 
 ## Nice to Have
 - Multiplayer(Cancelled, compromise with coop)
 - Competition mode(done)
-- Music Switching(in progress)
-- Upload the Music(I'll make it as a separate menu)(50/50)
-- Easter Eggs(in progress)
+- Music Switching(Cancelled)
+- Upload the Music(Cancelled)
+- Easter Eggs(Done, God mode)
 
 //MUSIC
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>

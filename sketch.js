@@ -14,9 +14,19 @@
 //https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt 
 
-//Music upload, I gotta work on it hard I guess
-//https://firebase.google.com/products/hosting?utm_source=chatgpt.com
 //---------------------------------END OF CREDENTIALS---------------------------------------------------------------------------
+
+//-------------------------------------------------------------IMPORTANT NOTE FOR MR. SCHELLENBERG------------------------------------------------
+//When I tested the game in front of the class, I noticed that animals were falling slower, than they should be
+//It works just fine on my own machine, so I guess the problem is in different frame rate and resolution, idk
+//I added these two varibles to adjust the speed for your machine. I already tried to do so, but just so you know
+//You can play with those variables
+//Also remember the "God Mode", just press G on keyboard, so the bar stops filling up
+//And thank you for this absolutely delightful year we spent together!
+
+let animalFall = 13;
+let barSpeed = 2;
+//--------------------------------------------------------------------END OF THE NOTE---------------------------------------------------------------
 
 //Player
 let player;
@@ -75,6 +85,11 @@ let submitButton2;
 //God mode
 let barPaused = false;
 
+//Leaderboard
+let showingLeaderboard = false;
+let btnLeaderboard;
+let btnLeaderboardBack;
+
 // -------------------------------------------------------------------- LOCAL STORAGE ---------------------------------------------------
 let storage = {
   saveUsers() {
@@ -97,6 +112,17 @@ let storage = {
     if (score > current) {
       localStorage.setItem(key, score);
     }
+  },
+
+  //Builds a sorted array of {name, score} from all known users
+  getLeaderboard() {
+    let entries = userList.map(name => ({
+      name: name,
+      score: storage.getBestScore(name)
+    }));
+    //Sort descending by score
+    entries.sort((a, b) => b.score - a.score);
+    return entries;
   }
 };
 
@@ -139,7 +165,7 @@ function setup() {
   darkModeToggle = createCheckbox(' Dark Mode', false);
   darkModeToggle.position(windowWidth / 2 - 90, windowHeight / 2 + 70);
   darkModeToggle.changed(() => {
-    darkMode = darkModeToggle.checked();
+  darkMode = darkModeToggle.checked();
   });
 }
 
@@ -150,6 +176,11 @@ function windowResized() {
 function draw() {
   //Mode selection screen
   if (currentUser !== null && gameMode === null) {
+    //Leaderboard overlay takes priority over the mode-select screen
+    if (showingLeaderboard) {
+      drawLeaderboard();
+      return;
+    }
     drawModeSelect();
     return;
   }
@@ -268,14 +299,21 @@ function showModeButtons() {
   btnCompete = createButton('Competition (2 players)');
   btnCompete.position(width / 2 - 210, height / 2 + 10);
   btnCompete.mousePressed(showPlayer2Input);
+
+  btnLeaderboard = createButton('Leaderboard');
+  btnLeaderboard.position(width / 2 - 110, height / 2 + 90);
+  btnLeaderboard.mousePressed(openLeaderboard);
 }
 
 //Show level selection buttons
 function showLevelButtons() {
   btnSingle.remove();
   btnCompete.remove();
+  btnLeaderboard.remove();
   btnSingle = null;
   btnCompete = null;
+  btnLeaderboard = null;
+
 
   for (let i = 1; i <= 10; i++) {
     let b = createButton('' + i);
@@ -300,8 +338,10 @@ function startSingle(lvl) {
 function showPlayer2Input() {
   btnSingle.remove();
   btnCompete.remove();
+  btnLeaderboard.remove();
   btnSingle = null;
   btnCompete = null;
+  btnLeaderboard = null;
 
   myInput2 = createInput('Player 2 name');
   myInput2.position(width / 2 - 90, height / 2);
@@ -332,7 +372,6 @@ function startCompetition() {
   player2 = new Player2();
   bar2 = new Bar();
 
-  //Reset first player places to use left half
   places = [];
   places.push(new Place(width / 4));
   bar.f = 0;
@@ -340,6 +379,83 @@ function startCompetition() {
 
   gameMode = "competition";
   gameStart = true;
+}
+
+// ---------------------------------------------------------------- LEADERBOARD ---------------------------------------------------
+
+//Opens the leaderboard overlay
+function openLeaderboard() {
+  showingLeaderboard = true;
+  btnSingle.hide();
+  btnCompete.hide();
+  btnLeaderboard.hide();
+
+  //Back button returns to mode select
+  btnLeaderboardBack = createButton('← Back');
+  btnLeaderboardBack.position(width / 2 - 50, height / 2 + 240);
+  btnLeaderboardBack.mousePressed(closeLeaderboard);
+}
+
+//Closes the leaderboard overlay
+function closeLeaderboard() {
+  showingLeaderboard = false;
+  btnLeaderboardBack.remove();
+  btnLeaderboardBack = null;
+  btnSingle.show();
+  btnCompete.show();
+  btnLeaderboard.show();
+}
+
+//Draws the leaderboard
+function drawLeaderboard() {
+  background(darkMode ? 30 : 220);
+
+  textAlign(CENTER);
+  fill(darkMode ? 220 : 30);
+  textSize(36);
+  text(' Leaderboard', width / 2, height / 2 - 210);
+
+  let entries = storage.getLeaderboard();
+
+  //Column header row
+  textSize(20);
+  fill(darkMode ? 160 : 80);
+  text('Rank', width / 2 - 160, height / 2 - 165);
+  text('Player', width / 2, height / 2 - 165);
+  text('Best Score', width / 2 + 160, height / 2 - 165);
+
+  //Divider line under header
+  stroke(darkMode ? 120 : 150);
+  strokeWeight(1);
+  line(width / 2 - 220, height / 2 - 150, width / 2 + 220, height / 2 - 150);
+  noStroke();
+
+  if (entries.length === 0) {
+    //No scores recorded yet
+    textSize(18);
+    fill(darkMode ? 140 : 100);
+    text('No scores yet — play a round!', width / 2, height / 2 - 110);
+    return;
+  }
+
+  //Draw up to 10 entries
+  let maxRows = min(entries.length, 10);
+  for (let i = 0; i < maxRows; i++) {
+    let entry = entries[i];
+    let rowY = height / 2 - 125 + i * 36;
+
+    //Highlight the current user's row
+    if (entry.name === currentUser) {
+      fill(darkMode ? 60 : 200);
+      noStroke();
+      rect(width / 2 - 225, rowY - 22, 450, 32, 6);
+    }
+
+    textSize(18);
+    fill(darkMode ? 220 : 30);
+    text(entry.name, width / 2, rowY);
+    text(entry.score, width / 2 + 160, rowY);
+  }
 }
 
 //Starts our gameplay
@@ -614,7 +730,7 @@ class Place {
   spawn() {
     //If the animal reaches the mat position, mark it as active
     if (this.y < height * 0.7) {
-      this.y += this.v + 13;
+      this.y += this.v + animalFall;
     }
     else {
       this.active = true;
@@ -692,7 +808,7 @@ class Bar {
     //Bar is faster at higher points and level
     let currentPoints = (this === bar) ? points : points2;
     let level = Math.floor(currentPoints / 10) + 1 + (chosenLevel - 1);
-    return min(8, 2.5 + (level - 1) * 1.5);
+    return min(6, barSpeed + (level - 1) * 1.5);
   }
 
   display() {
